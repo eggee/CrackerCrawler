@@ -1,12 +1,10 @@
-__author__ = 'Tim'
+__author__ = 'Tim Eggenberger'
 
 import requests
 import urllib2
 import os
-from slugify import slugify
 from bs4 import BeautifulSoup
-def trade_spider():
-    #report_path = 'C:/CrackerTabs'
+def guitar_tab_crawler():
     main_url = 'http://www.the-van.co.uk/songs/index.php?artist=Cracker'
     main_source_code = requests.get(main_url)
     main_plain_text = main_source_code.text
@@ -16,26 +14,24 @@ def trade_spider():
         song_id = link.get('href')
         if "item_id" in song_id:
             song_url = "http://www.the-van.co.uk/songs/index.php%s&chord=yes" % song_id
-            #url = 'http://www.the-van.co.uk/songs/index.php' + href + '&chord=yes'
             title = link.contents[0]
             #replace any illegal filename characters that may be in the title
+            #this will be used to create the new text file name.
             song_title = title.replace('?',"")
             print(song_title)
             print(song_id)
             print(song_url)
-            #write the song lyrics each to it's own filename
+            #
             song_source_code = urllib2.urlopen(song_url)
             song_soup = BeautifulSoup(song_source_code.read())
             song_lyrics = song_soup.get_text().encode("windows-1252")
             #removes all blank lines from the string
             song_lyrics = os.linesep.join([s for s in song_lyrics.splitlines() if s])
-            print(song_lyrics)
-            #
+            #print(song_lyrics)
+            #write the song lyrics each to it's own filename
             filename = ('C:/CrackerTabs/%s.txt' % song_title)
             f = open(filename, 'wb')
             f.write(song_lyrics)
             f.close()
-
-
 #call the def
-trade_spider()
+guitar_tab_crawler()
